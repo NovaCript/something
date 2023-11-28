@@ -125,8 +125,8 @@ class Hello(Resource):
     method_decorators = [jwt_required()]
     @ns.doc(security='jsonWebToken')
     def get(self):
-        print(current_user)
-        return {'message':'hello world'}
+        uid = get_jwt_identity()
+        return {'self.uid': uid}
 
 @ns.route("/register")
 class Register(Resource):
