@@ -1,7 +1,7 @@
 from flask_restx import Resource, Namespace
 from flask_jwt_extended import jwt_required, get_jwt_identity, \
     create_access_token
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from .parser import parser
 from .models import User, Products, Subcategory, Category
 from .api_model import login_model, user_model, product_model, \
@@ -69,22 +69,29 @@ class ProductListAPI(Resource):
         return product.items, 200
 
 
-
 @ns.route('/subcategory')
 class SubCategoryAPI(Resource):
 
+    @ns.expect(parser)
     @ns.marshal_list_with(subcategory_model)
     def get(self):
-        subcategory = Subcategory.query.all()
-        return subcategory
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        product = Subcategory.get_paginate(page, per_page)
+
+        return product.items, 200
 
 
 @ns.route('/category')
 class CategoryListApi(Resource):
 
+    @ns.expect(parser)
     @ns.marshal_list_with(category_model)
     def get(self):
-        category = Category.query.all()
-        return category
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        product = Category.get_paginate(page, per_page)
 
-
+        return product.items, 200
