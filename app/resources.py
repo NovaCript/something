@@ -2,9 +2,10 @@ from flask_restx import Resource, Namespace
 from flask_jwt_extended import jwt_required, get_jwt_identity, \
     create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from .parser import parser
 from .models import User, Products, Subcategory, Category
-from .api_model import login_model, user_model, product_model, subcategory_model, category_model
+from .api_model import login_model, user_model, product_model, \
+    subcategory_model, category_model
 from .extentions import db
 
 authorizations = {
@@ -57,10 +58,17 @@ class Login(Resource):
 @ns.route('/product')
 class ProductListAPI(Resource):
 
+    @ns.expect(parser)
     @ns.marshal_list_with(product_model)
     def get(self):
-        product = Products.query.all()
-        return product
+        args = parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        product = Products.get_paginate(page, per_page)
+
+        return product.items, 200
+
+
 
 @ns.route('/subcategory')
 class SubCategoryAPI(Resource):

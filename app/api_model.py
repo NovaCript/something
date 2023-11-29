@@ -13,6 +13,9 @@ user_model = api.model('User', {
     'username': fields.String
 })
 
+page_model = api.model('Paginate', {
+    'page': fields.Integer
+})
 
 product_model = api.model('Product',{
     'id':fields.Integer,
@@ -37,8 +40,7 @@ category_model = api.model('Category', {
     'id':fields.Integer,
     'name':fields.String,
     'slug_name': fields.String,
-    'image_large': fields.String,
+    'image_url': fields.String,
     'subcategories':fields.List(fields.Nested(subcategory_model))
 
 })
-

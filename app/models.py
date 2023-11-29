@@ -48,6 +48,11 @@ class Products(db.Model):
     subcategory_id = db.Column(db.ForeignKey('subcategory.id'), nullable=False)
     subcategory = db.relationship('Subcategory', back_populates='product')
 
+    @classmethod
+    def get_paginate(cls, page, per_page):
+        product = cls.query.paginate(page=page, per_page=per_page)
+        return product
+
     def __repr__(self):
         return self.name
 
