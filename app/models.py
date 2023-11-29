@@ -17,7 +17,6 @@ class Category(db.Model):
     slug_name = db.Column(db.String(100), unique=True)
     image_url = db.Column(db.String(255))
     subcategories = db.relationship('Subcategory', back_populates='category')
-
     def __repr__(self):
         return self.name
 
@@ -47,7 +46,6 @@ class Products(db.Model):
     image_large = db.Column(db.String(255))
     price = db.Column(db.Integer)
     subcategory_id = db.Column(db.ForeignKey('subcategory.id'), nullable=False)
-
     subcategory = db.relationship('Subcategory', back_populates='product')
 
     def __repr__(self):
