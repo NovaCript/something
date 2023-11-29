@@ -3,8 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, \
     create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .models import User
-from .api_model import login_model, user_model
+from .models import User, Products, Subcategory, Category
+from .api_model import login_model, user_model, product_model, subcategory_model, category_model
 from .extentions import db
 
 authorizations = {
@@ -25,7 +25,7 @@ class Hello(Resource):
     @ns.doc(security='jsonWebToken')
     def get(self):
         uid = get_jwt_identity()
-        return {'self.uid': uid}
+        return {'Hello user': uid}
 
 
 @ns.route("/register")
@@ -52,3 +52,31 @@ class Login(Resource):
         if not check_password_hash(user.password_hash, ns.payload['password']):
             return {'error': 'Incorrect password'}, 401
         return {'access_token': create_access_token(user)}
+
+
+@ns.route('/product')
+class ProductListAPI(Resource):
+
+    @ns.marshal_list_with(product_model)
+    def get(self):
+        product = Products.query.all()
+        return product
+
+@ns.route('/subcategory')
+class SubCategoryAPI(Resource):
+
+    @ns.marshal_list_with(subcategory_model)
+    def get(self):
+        subcategory = Subcategory.query.all()
+        return subcategory
+
+
+@ns.route('/category')
+class CategoryListApi(Resource):
+
+    @ns.marshal_list_with(category_model)
+    def get(self):
+        category = Category.query.all()
+        return category
+
+
