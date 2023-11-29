@@ -1,6 +1,13 @@
+from __future__ import annotations
 from flask_admin.contrib.sqla import ModelView
-
 from .extentions import db, admin
+
+
+class DatabaseMethod:
+    @classmethod
+    def get_paginate(cls, page, per_page):
+        product = cls.query.paginate(page=page, per_page=per_page)
+        return product
 
 
 class User(db.Model):
@@ -10,18 +17,19 @@ class User(db.Model):
     password_hash = db.Column(db.String(100))
 
 
-class Category(db.Model):
+class Category(db.Model, DatabaseMethod):
     __tablename__ = 'category'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     slug_name = db.Column(db.String(100), unique=True)
     image_url = db.Column(db.String(255))
     subcategories = db.relationship('Subcategory', back_populates='category')
+
     def __repr__(self):
         return self.name
 
 
-class Subcategory(db.Model):
+class Subcategory(db.Model, DatabaseMethod):
     __tablename__ = 'subcategory'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
@@ -36,7 +44,7 @@ class Subcategory(db.Model):
         return self.name
 
 
-class Products(db.Model):
+class Products(db.Model, DatabaseMethod):
     __tablename__ = 'products'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
@@ -47,11 +55,6 @@ class Products(db.Model):
     price = db.Column(db.Integer)
     subcategory_id = db.Column(db.ForeignKey('subcategory.id'), nullable=False)
     subcategory = db.relationship('Subcategory', back_populates='product')
-
-    @classmethod
-    def get_paginate(cls, page, per_page):
-        product = cls.query.paginate(page=page, per_page=per_page)
-        return product
 
     def __repr__(self):
         return self.name
